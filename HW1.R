@@ -60,5 +60,4 @@ hist(x2)
 
 ks.test(x2, 1)
 
-1
 
