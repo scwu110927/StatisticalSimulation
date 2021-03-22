@@ -111,4 +111,43 @@ table(v1)
 ks.test(vector,y="punif")
 chisq.test(table(v1))
 
+#5(b)
+#fi
+casio <- function(seed,times){
+  fi <- (1+sqrt(5))/2
+  uvector <- NULL
+  for(i in 1:times){
+    seed <- ((fi+seed)^5) %% 1
+    uvector<-c(uvector,seed)
+  }
+  return(uvector)
+}
 
+(l<-runif(1,0,1))
+k<-casio(l,10000)
+hist(k)
+
+v1<-floor(k*10) #分組以0.1為級距
+#hist(v1)
+table(v1)
+
+
+#sqrt(2)
+casio2 <- function(seed,times){
+  uvector <- NULL
+  for(i in 1:times){
+    seed <- ((sqrt(2)+seed)^5) %% 1
+    uvector<-c(uvector,seed)
+  }
+  return(uvector)
+}
+
+k2<-casio2(l,10000)
+hist(k2)
+
+v11<-floor(k2*10) #分組以0.1為級距
+#hist(v1)
+table(v11)
+
+chisq.test(table(v1))
+chisq.test(table(v11))
