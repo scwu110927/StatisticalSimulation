@@ -111,13 +111,34 @@ table(v1)
 ks.test(vector,y="punif")
 chisq.test(table(v1))
 
+#5(a)
+t1=NULL
+be=10000/15
+for (i in 1:1000) {
+  a1=sample(c(1:15), 10000, T)
+  a2=ceiling(15*runif(10000))
+  b1=table(a1)
+  b2=table(a2)
+  c1=sum((b1-be)^2/be)
+  c2=sum((b2-be)^2/be)
+  d1=pchisq(c1,14)
+  d2=pchisq(c2,14)
+  t1=cbind(t1,c(d1,d2))
+}
+hist(t1[1,])
+v1<-table(floor(t1[1,]*10))
+chisq.test(v1)
+hist(t1[2,])
+v2<-table(floor(t1[2,]*10))
+chisq.test(v2)
+
 #5(b)
-#fi
+#phi
 casio <- function(seed,times){
-  fi <- (1+sqrt(5))/2
+  phi <- (1+sqrt(5))/2
   uvector <- NULL
   for(i in 1:times){
-    seed <- ((fi+seed)^5) %% 1
+    seed <- ((phi+seed)^5) %% 1
     uvector<-c(uvector,seed)
   }
   return(uvector)
