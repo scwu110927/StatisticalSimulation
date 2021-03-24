@@ -163,11 +163,11 @@ v2 <- floor(k2 * 10)
 chisq.test(table(v2))
 
 #6
-fibonacci <- function(seed,n){ 
+fibonacci <- function(seed, n){ 
   m <- length(seed) - 1 
   for (j in 1:n) { 
-    x=(seed[j] + seed[j+m]) %% 1
-    seed=c(seed,x)
+    x <- (seed[j] + seed[j+m]) %% 1
+    seed <- c(seed,x)
   }
   return(seed[-c(1:(m+1))])
 }
@@ -177,19 +177,17 @@ p <- NULL
 pid <- NULL
 for(i in 1:10){
   k <- runif(10*i, 0, 1)
-  k <- fibonacci(k,10000)
+  k <- fibonacci(k, 10000)
   pvector <- chisq.test(table(ceiling(k*10)/10))$p.value
-  p <- c(p,pvector)
-  mat <- matrix(k[-1],ncol=3333, byrow = F)
-  mat2 <- apply(mat,2,rank)
+  p <- c(p, pvector)
+  mat <- matrix(k[-1], ncol=3333, byrow = F)
+  mat2 <- apply(mat, 2, rank)
   mat3 <- mat2[1,]*100 + mat2[2,]*10 + mat2[3,]
   pidvector <- chisq.test(table(mat3))$p.value
-  pid <- c(pid,pidvector)
+  pid <- c(pid, pidvector)
 }
 
-plot(seq(10, 100, 10), p, type = "b", main = "diffe")
+plot(seq(10, 100, 10), p, type = "b", main = "difference of p-values")
 lines(seq(10, 100, 10), pid, type = "b", col = 2)
 legend(70, .2, c("GOF", "Indept"), col = c(1, 2), lty = 1, pch = 1)
 abline(h = 0.05, col = 3)
-
-
