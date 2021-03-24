@@ -40,11 +40,13 @@ symbols(x, y, circles = index, add = T)
 
 
 #3-################
-gcd = function(a,b)
-{ if (b==0) a else gcd(b,a%%b) }
+gcd = function(a,b){
+  if (b==0) a else gcd(b, a %% b) 
+}
 
-lcm = function(c,d)
-{ return(c*d/gcd(c,d)) }
+lcm = function(c,d){
+  return(c * d / gcd(c,d)) 
+}
 
 
 #4(a)-################
