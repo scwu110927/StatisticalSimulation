@@ -180,7 +180,7 @@ for(i in 1:10){
   k <- fibonacci(k, 10000)
   pvector <- chisq.test(table(ceiling(k*10)/10))$p.value
   p <- c(p, pvector)
-  mat <- matrix(k[-1], ncol=3333, byrow = F)
+  mat <- matrix(k[-1], ncol = 3333, byrow = F)
   mat2 <- apply(mat, 2, rank)
   mat3 <- mat2[1,]*100 + mat2[2,]*10 + mat2[3,]
   pidvector <- chisq.test(table(mat3))$p.value
