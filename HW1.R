@@ -172,16 +172,10 @@ fibonacci <- function(seed,n){
   return(seed[-c(1:(m+1))])
 }
 
-k1<-runif(10,0,1) #m=9
-k11<-fibonacci(k1,10000)
-ks.test(k11,y="punif")
-k12 <- ceiling(k11*10)/10
-table(k12)
-chisq.test(table(k12))
-
-k2<-runif(1000,0,1) #m=999 larger m
-k22<-fibonacci(k2,10000)
-ks.test(k22,y="punif")
-k23 <- ceiling(k22*10)/10
-table(k23)
-chisq.test(table(k23))
+p<-NULL
+for(i in 10:100){
+  k<-runif(i,0,1)
+  k<-fibonacci(k,10000)
+  pvector<-chisq.test(table(ceiling(k*10)/10))$p.value
+  p<-c(p,pvector)
+}
