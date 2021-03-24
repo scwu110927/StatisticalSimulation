@@ -161,6 +161,18 @@ v1 <- floor(k * 10)
 chisq.test(table(v1))
 v2 <- floor(k2 * 10)
 chisq.test(table(v2))
+ 
+t2 <- NULL
+for(i in 1:1000){
+  l <- runif(1, 0, 1)
+  k <- casio(l, 10000)
+  k2 <- casio2(l, 10000)
+  v1 <- floor(k * 10)
+  u1 <- chisq.test(table(v1))$p.value
+  v2 <- floor(k2 * 10)
+  u2 <- chisq.test(table(v2))$p.calue
+  t2 <- cbind(t2, c(u1,u2))
+}
 
 #6
 fibonacci <- function(seed, n){ 
