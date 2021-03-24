@@ -160,3 +160,28 @@ chisq.test(table(v1))
 v2 <- floor(k2 * 10)
 chisq.test(table(v2))
 
+#6
+fibonacci <- function(seed,n){ 
+  m=length(seed)-1 #seed is a vector
+  #m隨seed的元素個數變化
+  #-1的目的從最後一個數開始加
+  for (j in 1:n) { 
+    x=(seed[j]+seed[j+m]) %% 1
+    seed=c(seed,x)
+  }
+  return(seed[-c(1:(m+1))])
+}
+
+k1<-runif(10,0,1) #m=9
+k11<-fibonacci(k1,10000)
+ks.test(k11,y="punif")
+k12 <- ceiling(k11*10)/10
+table(k12)
+chisq.test(table(k12))
+
+k2<-runif(1000,0,1) #m=999 larger m
+k22<-fibonacci(k2,10000)
+ks.test(k22,y="punif")
+k23 <- ceiling(k22*10)/10
+table(k23)
+chisq.test(table(k23))
