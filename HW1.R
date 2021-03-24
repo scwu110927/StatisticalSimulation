@@ -5,7 +5,7 @@ rep(seq(0,4), each = 5)
 #1(b)
 seq(1:5) + rep(0:4, each = 5)
 
-#1(C) 
+#1(c) 
 x <- c("red","yellow","blue","green","magenta","cyan")
 i <- seq(1:3) + rep(0:3, each = 3)
 x[i]
@@ -122,8 +122,8 @@ for (i in 1:1000) {
   t1 <- cbind(t1,c(d1,d2))
 }
 par(mfrow = c(1, 2))
-hist(t1[1,])
-hist(t1[2,])
+hist(t1[1,], xlab = 'p-value', main = 'sample()')
+hist(t1[2,], xlab = 'p-value', main = 'runif()')
 
 v1 <- table(floor(t1[1,] * 10))
 chisq.test(v1)
@@ -165,16 +165,25 @@ chisq.test(table(v2))
 t2 <- NULL
 for(i in 1:1000){
   l <- runif(1, 0, 1)
-  k <- casio(l, 10000)
-  k2 <- casio2(l, 10000)
+  k <- casio(l, 1000)
+  k2 <- casio2(l, 1000)
   v1 <- floor(k * 10)
   u1 <- chisq.test(table(v1))$p.value
   v2 <- floor(k2 * 10)
-  u2 <- chisq.test(table(v2))$p.calue
+  u2 <- chisq.test(table(v2))$p.value
   t2 <- cbind(t2, c(u1,u2))
 }
+par(mfrow = c(1, 2))
+hist(t2[1,], xlab = 'p-value', main = '(1+sqrt(5))/2')
+hist(t2[2,], xlab = 'p-value', main = 'sqrt(2)')
 
-#6
+v1 <- table(floor(t2[1,] * 10))
+chisq.test(v1)
+v2 <- table(floor(t2[2,] * 10))
+chisq.test(v2)
+
+
+#6-################
 fibonacci <- function(seed, n){ 
   m <- length(seed) - 1 
   for (j in 1:n) { 
@@ -201,6 +210,7 @@ for(i in 1:10){
 
 plot(seq(10, 100, 10), p, type = "b", 
      main = "Difference of p-values", xlab = 'm')
-lines(seq(10, 100, 10), pid, type = "b", col = 2)
-legend(70, .2, c("GOF", "Indept"), col = c(1, 2), lty = 1, pch = 1)
+lines(seq(10, 100, 10), pid, type = "b", col = 2, lty = 2)
+legend(70, .2, c("GOF", "Indept"), col = c(1, 2), 
+       lty = c(1, 2), pch = 1)
 abline(h = 0.05, col = 3)
