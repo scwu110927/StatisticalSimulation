@@ -141,7 +141,7 @@ casio <- function(seed, times){
   return(uvector)
 }
 
-casio2 <- function(seed,times){
+casio2 <- function(seed, times){
   uvector <- NULL
   for(i in 1:times){
     seed <- ((sqrt(2)+seed)^5) %% 1
