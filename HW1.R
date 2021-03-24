@@ -187,7 +187,8 @@ for(i in 1:10){
   pid <- c(pid, pidvector)
 }
 
-plot(seq(10, 100, 10), p, type = "b", main = "difference of p-values")
+plot(seq(10, 100, 10), p, type = "b", 
+     main = "Difference of p-values", xlab = 'm')
 lines(seq(10, 100, 10), pid, type = "b", col = 2)
 legend(70, .2, c("GOF", "Indept"), col = c(1, 2), lty = 1, pch = 1)
 abline(h = 0.05, col = 3)
