@@ -55,14 +55,14 @@ midsqur <- function(seed,times){
   for(i in 1:times){
     num <- seed * seed
     seed <- (num%/%1000) %% 1000000
-    numvector <- c(numvector,seed)
+    numvector <- c(numvector, seed)
   }
+  numvector <- (numvector / 10^6)
   return(numvector)
 }
 
-x <- ceiling(runif(1, 0, 999999)) #seed
+x <- ceiling(runif(1, 0, 999999)) 
 x1 <- midsqur(x, 10000)
-x1 <- (x1 / 10^6)
 hist(x1)
 ks.test(x1, y = "punif")
 
