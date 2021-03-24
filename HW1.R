@@ -173,9 +173,11 @@ fibonacci <- function(seed,n){
 }
 
 p<-NULL
-for(i in 10:100){
-  k<-runif(i,0,1)
+for(i in 1:10){
+  k<-runif(10*i, 0, 1)
   k<-fibonacci(k,10000)
   pvector<-chisq.test(table(ceiling(k*10)/10))$p.value
   p<-c(p,pvector)
 }
+
+plot(seq(10, 100, 10), p, type = "b")
