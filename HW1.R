@@ -184,16 +184,16 @@ for(i in 1:10){
 
 plot(seq(10, 100, 10), p, type = "b")
  
-p<-NULL
-pid<-NULL
+p <- NULL
+pid <- NULL
 for(i in 1:10){
-  k<-runif(10*i, 0, 1)
-  k<-fibonacci(k,10000)
-  pvector<-chisq.test(table(ceiling(k*10)/10))$p.value
-  p<-c(p,pvector)
-  mat<-matrix(k[-1],ncol=3333,byrow=F)
-  mat2<-apply(mat,2,rank)
-  mat3<-mat2[1,]*100+mat2[2,]*10+mat2[3,]
-  pidvector<-1-pchisq(sum((table(mat3)-555.5)^2/555.5),18)
-  pid<-c(pid,pidvector)
+  k <- runif(10*i, 0, 1)
+  k <- fibonacci(k,10000)
+  pvector <- chisq.test(table(ceiling(k*10)/10))$p.value
+  p <- c(p,pvector)
+  mat <- matrix(k[-1],ncol=3333,byrow=F)
+  mat2 <- apply(mat,2,rank)
+  mat3 <- mat2[1,]*100+mat2[2,]*10+mat2[3,]
+  pidvector <- chisq.test(table(mat3))$p.value
+  pid <- c(pid,pidvector)
 }
