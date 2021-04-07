@@ -263,3 +263,16 @@ c(p[1]/10000, p[2]/10000, p[3]/10000, p[4]/10000)
 c(x0, x1, x2,x3)
 
 #the Alias method
+alias.run=function(n) {
+ temp=NULL
+for (i in 1:n) {
+x=floor(4*runif(1))
+x2=(runif(1) < 2/27)*1
+x3=(runif(1) < 3/27)*1
+ x4=(runif(1) < 23/27)*1
+ xx=c(0,1,2,2)*c(0,x2,x3,x4)
+ y=x-xx[c(x+1)]
+temp=c(temp,y)
+}
+return(temp)
+ } 
