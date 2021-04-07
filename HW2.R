@@ -66,8 +66,8 @@ chisq.test(table(ceiling(k*10))) #reject H0 not uniform
 
 #2################################
 #(a)
-pi <- read.table("StatisticalSimulation/pi.txt", colClasses="character")
-pi.digit <- as.numeric(strsplit(as.character(pi), "")[[1]][-c(1:2)])
+pidata <- read.table("StatisticalSimulation/pi.txt", colClasses="character")
+pi.digit <- as.numeric(strsplit(as.character(pidata), "")[[1]][-c(1:2)])
 
 hist(pi.digit)
 chisq.test(table(pi.digit))
@@ -139,7 +139,7 @@ polar.method <- function(runs){
     }else if(p <= 0.05){
       p2 <- p2 + 1
     }else if(p <= 0.1){
-      p3 <- p3+1
+      p3 <- p3 + 1
     }
     p.value <- c(p.value, p)
   }
@@ -170,7 +170,7 @@ ratio.of.uniforms <- function(runs){
     }else if(p <= 0.05){
       p2 <- p2 + 1
     }else if(p <= 0.1){
-      p3 <- p3+1
+      p3 <- p3 + 1
     }
     p.value <- c(p.value, p)
   }
@@ -194,7 +194,7 @@ r.norm <- function(runs){
     }else if(p <= 0.05){
       p2 <- p2 + 1
     }else if(p <= 0.1){
-      p3 <- p3+1
+      p3 <- p3 + 1
     }
     p.value <- c(p.value, p)
   }
@@ -209,14 +209,7 @@ b <- polar.method(1000)
 c <- ratio.of.uniforms(1000)
 d <- r.norm(1000)
 
-ks.test(a,"punif")
-ks.test(b,"punif")
-ks.test(c,"punif")
-ks.test(d,"punif")
-
 #best is rnorm 
-#(1) because of p-value smaller amounts under 0.1
-#(2) ks.test p-value is the biggest
   
 #4(b)
 #131 2^35 ??
@@ -234,7 +227,7 @@ for(i in 1:100){
   xy.vector <- c(xy.vector,x,y)
 }
 xy.vector
-(-3.3 < xy.vector & xy.vector < 3.6)
+sum(-3.3 < xy.vector & xy.vector < 3.6)/length(xy.vector)
   
 #6
 #table.method
