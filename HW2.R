@@ -212,8 +212,6 @@ d <- r.norm(1000)
 #best is rnorm 
   
 #4(b)
-#131 2^35 ??
-
 u <- runif(2)
 theta <- 2*pi*u[1]
 k <- -log(u[2])
@@ -228,7 +226,47 @@ for(i in 1:100){
 }
 xy.vector
 sum(-3.3 < xy.vector & xy.vector < 3.6)/length(xy.vector)
-  
+ 
+
+
+#5
+
+#(b)
+leng1 <- NULL
+ks1 <- NULL
+ks2 <- NULL
+for(i in 1:10){
+  x1<- NULL
+  for(j in 1:10000){
+    u1 <- runif(1)
+    u2 <- runif(1)
+    v <- 2*u2 - 1
+    if (u1^2 + v^2 < 1){
+      x <- v/u1
+      x1 <- c(x1, x)
+      }else{
+        next
+      }
+    }
+
+  x2 <- NULL
+  for(j in 1:10000){
+    u1 <- rnorm(1)
+    u2 <- rnorm(1)
+    x <- u1/u2
+    x2 <- c(x2, x)
+    }
+
+  leng1 <- c(leng1, length(x1)/10000)
+  ks1 <- c(ks1, ks.test(x1, "pcauchy")$p.value)
+  ks2 <- c(ks2, ks.test(x2, "pcauchy")$p.value)
+}
+
+mean(leng1)
+mean(ks1)
+mean(ks2)
+
+
 #6
 #table.method
 x0 <- dbinom(0,3,1/3) #0.2962
@@ -270,9 +308,12 @@ x=floor(4*runif(1))
 x2=(runif(1) < 2/27)*1
 x3=(runif(1) < 3/27)*1
  x4=(runif(1) < 23/27)*1
- xx=c(0,1,2,2)*c(0,x2,x3,x4)
+ xx=c(0,1,2,3)*c(0,x2,x3,x4)
  y=x-xx[c(x+1)]
 temp=c(temp,y)
 }
 return(temp)
  } 
+alias.run(100)
+
+
