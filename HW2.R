@@ -85,7 +85,8 @@ gap.test(numbers, .2, .8)
 
 
 
-#4(a)
+#4################################
+#(a)
 #Box-Muller
 boxmuller.method <- function(runs){
   p.value <- NULL
@@ -106,7 +107,7 @@ boxmuller.method <- function(runs){
     }else if(p <= 0.05){
       p2 <- p2 + 1
     }else if(p <= 0.1){
-      p3 <- p3+1
+      p3 <- p3 + 1
     }
     p.value <- c(p.value, p)
   }
