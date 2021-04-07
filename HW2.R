@@ -1,27 +1,24 @@
-##-HW1-################
-#1(a)################
-#gap.test
+##-HW2-################
+#1################################
+#(a)
 gap.test <- function(data, a, b){
-  x <- length(data)
-  x1 <- (data > a & data < b)*c(1:x)
-  x2 <- x1[x1>0]
-  y <- x2[-1]-x2[-length(x2)]
-  return(table(y))
+  data <- data/max(data)
+  n <- length(data)
+  x <- c(1:n) * (a < data & data < b)
+  x1 <- x[x>0]
+  y <- x1[-1]-x1[-length(x1)]-1
+  t.y <- table(y)
+  e <- (b-a) * (1-(b-a))^(c(1:dim(t.y))-1) * sum(t.y)
+  e.p <- e / sum(e)
+  c.t <- chisq.test(t.y, p = e.p)
+  return(list("gaps" = t.y, "expected count" = round(e), "chisq.test" = c.t))
 }
 
-rn10000 <- read.csv("./rn10000.csv", header = F)
+rn10000 <- read.csv("StatisticalSimulation/rn10000.csv", header = F)
 rn10000 <- as.matrix(rn10000)
-(y <- gap.test(rn10000, 0.2, 0.7))
-#分組1,2,3,4,5,6,7,8,9,10+
-for(i in 11:13){
-  y[10] <- y[10] + y[i]
-}
-y1 <- y[1:10]
-#chisq.test
-#H0: χ2為0(inde.) v.s. H1: χ2不為0(not inde.)
-chisq.test(y1) #not inde.
+gap.test(rn10000, 0.2, 0.7)
 
-#permutation.test
+
 permutation.test <- function(data){
   x1 <- matrix(data[-1], ncol = length(data) %/% 3, byrow = F)
   y1 <- apply(x1, 2, rank)
@@ -29,8 +26,8 @@ permutation.test <- function(data){
   return(table(y2))
 }
 
-(y2 <- permutation.test(rn10000))
-chisq.test(y2) #inde.
+y <- permutation.test(rn10000)
+chisq.test(y)
 
 #(b)
 updown.test <- function(num,runs){
@@ -61,46 +58,32 @@ updown.test <- function(num,runs){
   return(k.vector)
 }
 
-k <- updown.test(1000,10000)
+k <- updown.test(10000, 1000)
 hist(k, xlab = 'p-value', main = 'z.table.pvalue')
 ks.test(k, y = "punif") #reject H0 not uniform
-chisq.test(ceiling(k*10)) #reject H0 not uniform
+chisq.test(table(ceiling(k*10))) #reject H0 not uniform
 
 
-#2(a)
+#2################################
+#(a)
 pi <- read.table("StatisticalSimulation/pi.txt", colClasses="character")
 pi.digit <- as.numeric(strsplit(as.character(pi), "")[[1]][-c(1:2)])
 
 hist(pi.digit)
 chisq.test(table(pi.digit))
+gap.test(pi.digit, .2, .8)
 
 
-
-
-
-#3
+#3################################
 q3 <- read.table("StatisticalSimulation/hw2_3.txt")
 numbers <- as.vector(as.matrix(q3[, -c(1, 9)]))
 hist(numbers)
 
 v <- floor(numbers * .25)
 chisq.test(table(v))
-hist(data)
-
-gap.test <- function(data, a, b){
-  data <- data/42
-  n <- length(data)
-  x <- c(1:n) * (a < data & data < b)
-  x1 <- x[x>0]
-  y <- x1[-1]-x1[-length(x1)]-1
-  t.y <- table(y)
-  e <- (b-a) * (1-(b-a))^(c(1:dim(t.y))-1) * sum(t.y)
-  e.p <- e / sum(e)
-  c.t <- chisq.test(t.y, p = e.p)
-  return(list("gaps" = t.y, "expected count" = round(e), "chisq.test" = c.t))
-}
-
 gap.test(numbers, .2, .8)
+
+
 
 #4(a)
 #Box-Muller
