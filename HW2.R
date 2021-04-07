@@ -236,21 +236,27 @@ c <- max(dcauchy(x)/dt(x, 0.5))
 x.p <- NULL
 t <- 0
 
-for(i in 1:1000){
-  t1 <- rt(1, 0.5)
-  t2 <- rt(1, 0.5)
-  k <- (dcauchy(t1)/dt(t1, 0.5))/c
-  if(t2 <= k){
-    x.p <- c(x.p, t1)
-  }else{
-    next
+repeat{
+  u1 <- runif(1)
+  u2 <- runif(1)
+  u3 <- runif(1)
+  v <- 2*u2 - 1
+  x <- v/u1
+  k <- dcauchy(x)/dt(x, 0.5)/c
+  if(u3 <= k){
+    x.p <- c(x.p, x)
   }
+  t <- t + 1
+  if (length(x.p) == 100) break
 }
 
-length(x.p)/1000
+100/t
 hist(x.p)
 ks.test(x.p, "pcauchy")
+y <- permutation.test(x.p)
+chisq.test(y)
   
+
 #(b)
 leng1 <- NULL
 ks1 <- NULL
