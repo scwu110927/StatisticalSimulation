@@ -1,6 +1,70 @@
 ##-HW1-################
-#1(a)
+#1(a)################
+#gap.test
+gap.test <- function(data, a, b){
+  x <- length(data)
+  x1 <- (data > a & data < b)*c(1:x)
+  x2 <- x1[x1>0]
+  y <- x2[-1]-x2[-length(x2)]
+  return(table(y))
+}
 
+rn10000 <- read.csv("./rn10000.csv", header = F)
+rn10000 <- as.matrix(rn10000)
+(y <- gap.test(rn10000, 0.2, 0.7))
+#分組1,2,3,4,5,6,7,8,9,10+
+for(i in 11:13){
+  y[10] <- y[10] + y[i]
+}
+y1 <- y[1:10]
+#chisq.test
+#H0: χ2為0(inde.) v.s. H1: χ2不為0(not inde.)
+chisq.test(y1) #not inde.
+
+#permutation.test
+permutation.test <- function(data){
+  x1 <- matrix(data[-1], ncol = length(data) %/% 3, byrow = F)
+  y1 <- apply(x1, 2, rank)
+  y2 <- y1[1,]*100 + y1[2,]*10 + y1[3,]
+  return(table(y2))
+}
+
+(y2 <- permutation.test(rn10000))
+chisq.test(y2) #inde.
+
+#(b)
+updown.test <- function(num,runs){
+  k.vector <- NULL
+  p <- 0
+  q <- 0
+  g <- 0
+  for(i in 1:runs){
+    x <- runif(num)
+    x1 <- (x[-1]>x[-num])
+    x2 <- sum((x1[-1] != x1[-(num-1)]))
+    z <- (x2-(2*num-1)/3)/sqrt((16*num-29)/90)
+    k <- pnorm(z)
+    k.vector <- c(k.vector,k)
+    if(k <= 0.01){
+      p <- p+1
+    }else if(k <= 0.05){
+      q <- q+1
+    }else if(k <= 0.1){
+      g <- g+1
+    }
+  }
+  cat("p-value under 0.01", p,
+      "p-value between 0.01 and 0.05", q,
+      "p-value between 0.05 and 0.1", g,
+      "p-value better than 0.1", runs-p-q-g,
+      sep = "\n")
+  return(k.vector)
+}
+
+k <- updown.test(1000,10000)
+hist(k, xlab = 'p-value', main = 'z.table.pvalue')
+ks.test(k, y = "punif") #reject H0 not uniform
+chisq.test(ceiling(k*10)) #reject H0 not uniform
 
 
 #2(a)
@@ -38,3 +102,187 @@ gap.test <- function(data, a, b){
 
 gap.test(numbers, .2, .8)
 
+#4(a)
+#Box-Muller
+boxmuller.method <- function(runs){
+  p.value <- NULL
+  p1 <- 0
+  p2 <- 0
+  p3 <- 0
+  for(i in 1:runs){
+    u1 <- runif(10000)
+    u2 <- runif(10000)
+    theta <- 2*pi*u1
+    k <- -log(u2)
+    r <- sqrt(2*k)
+    x <- r*cos(theta)
+    y <- r*sin(theta)
+    p <- ks.test(c(x,y), "pnorm")$p.value
+    if(p <= 0.01){
+      p1 <- p1 + 1
+    }else if(p <= 0.05){
+      p2 <- p2 + 1
+    }else if(p <= 0.1){
+      p3 <- p3+1
+    }
+    p.value <- c(p.value, p)
+  }
+  cat("p-value under 0.01 :",p1,"\n",
+      "p-value under 0.05 :",p1+p2,"\n",
+      "p-value under 0.1 :",p1+p2+p3,"\n")
+  return(p.value)
+}
+
+#Polar Method
+polar.method <- function(runs){
+  p.value <- NULL
+  p1 <- 0
+  p2 <- 0
+  p3 <- 0
+  for(i in 1:runs){
+    v1 <- runif(10000, min = -1, max = 1)
+    v2 <- runif(10000, min = -1, max = 1)
+    w <- v1^2+v2^2
+    w1 <- which(w < 1)
+    w2 <- cbind(v1, v2, w)
+    w2 <- w2[c(w1),]
+    c <- sqrt(-2*log(w2[,3])/w2[,3])
+    x <- c*w2[,1]
+    y <- c*w2[,2]
+    p <- ks.test(c(x,y), "pnorm")$p.value
+    if(p <= 0.01){
+      p1 <- p1 + 1
+    }else if(p <= 0.05){
+      p2 <- p2 + 1
+    }else if(p <= 0.1){
+      p3 <- p3+1
+    }
+    p.value <- c(p.value, p)
+  }
+  cat("p-value under 0.01 :",p1,"\n",
+      "p-value under 0.05 :",p1+p2,"\n",
+      "p-value under 0.1 :",p1+p2+p3,"\n")
+  return(p.value)
+}
+
+#Ratio of uniforms
+ratio.of.uniforms <- function(runs){
+  p.value <- NULL
+  p1 <- 0
+  p2 <- 0
+  p3 <- 0
+  for(i in 1:runs){
+    u1 <- runif(10000)
+    u2 <- runif(10000)
+    v <- sqrt(2/exp(1))*(2*u2-1)
+    x <- v/u1
+    z <- x^2/4
+    z1 <- which(z <= (0.259/u1)+0.35 & z <= -log(u1))
+    z2 <- cbind(x, z)
+    z2 <- z2[c(z1),]
+    p <- ks.test(z2[,1], "pnorm")$p.value
+    if(p <= 0.01){
+      p1 <- p1 + 1
+    }else if(p <= 0.05){
+      p2 <- p2 + 1
+    }else if(p <= 0.1){
+      p3 <- p3+1
+    }
+    p.value <- c(p.value, p)
+  }
+  cat("p-value under 0.01 :",p1,"\n",
+      "p-value under 0.05 :",p1+p2,"\n",
+      "p-value under 0.1 :",p1+p2+p3,"\n")
+  return(p.value)
+}
+
+#rnorm()
+r.norm <- function(runs){
+  p.value <- NULL
+  p1 <- 0
+  p2 <- 0
+  p3 <- 0
+  for(i in 1:runs){
+    u <- rnorm(10000)
+    p <- ks.test(u, "pnorm")$p.value
+    if(p <= 0.01){
+      p1 <- p1 + 1
+    }else if(p <= 0.05){
+      p2 <- p2 + 1
+    }else if(p <= 0.1){
+      p3 <- p3+1
+    }
+    p.value <- c(p.value, p)
+  }
+  cat("p-value under 0.01 :",p1,"\n",
+      "p-value under 0.05 :",p1+p2,"\n",
+      "p-value under 0.1 :",p1+p2+p3,"\n")
+  return(p.value)
+}
+
+a <- boxmuller.method(1000)
+b <- polar.method(1000)
+c <- ratio.of.uniforms(1000)
+d <- r.norm(1000)
+
+ks.test(a,"punif")
+ks.test(b,"punif")
+ks.test(c,"punif")
+ks.test(d,"punif")
+
+#best is rnorm 
+#(1) because of p-value smaller amounts under 0.1
+#(2) ks.test p-value is the biggest
+  
+#4(b)
+#131 2^35 ??
+
+u <- runif(2)
+theta <- 2*pi*u[1]
+k <- -log(u[2])
+r <- sqrt(2*k)
+x <- r*cos(theta)
+y <- r*sin(theta)
+xy.vector <- c(x,y)
+for(i in 1:100){
+  x <- (131*(x)) %% (2^35)
+  y <- (131*(y)) %% (2^35)
+  xy.vector <- c(xy.vector,x,y)
+}
+xy.vector
+(-3.3 < xy.vector & xy.vector < 3.6)
+  
+#6
+#table.method
+x0 <- dbinom(0,3,1/3) #0.2962
+x1 <- dbinom(1,3,1/3) #0.4444
+x2 <- dbinom(2,3,1/3) #0.2222
+x3 <- dbinom(3,3,1/3) #0.0370
+
+table.method <- function(runs){
+  x.vector <- NULL
+  for(i in 1:runs){
+    u <- runif(1)
+    x1 <- c(rep(0,2),rep(1,4),rep(2,2),rep(3,0))
+    x2 <- c(rep(0,9),rep(1,4),rep(2,2),rep(3,3))
+    x3 <- c(rep(0,6),rep(1,4),rep(2,2),rep(3,7))
+    if(u < 0.8){
+      j <- floor(10*u)+1        
+      x <- x1[j]
+    }else if(u < 0.98){
+      j <- floor(100*u)-80+1
+      x <- x2[j]
+    }else{
+      j <- floor(1000*u)-980+1
+      x <- x3[j]
+    }
+    x.vector <- c(x.vector, x)
+  }
+  return(table(x.vector))
+}
+
+p <- table.method(10000)
+c(p[1]/10000, p[2]/10000, p[3]/10000, p[4]/10000)
+c(x0, x1, x2,x3)
+
+#the Alias method
