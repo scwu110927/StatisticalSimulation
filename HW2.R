@@ -225,14 +225,15 @@ k <- -log(u[2])
 r <- sqrt(2*k)
 x <- r*cos(theta)
 y <- r*sin(theta)
-xy.vector <- c(x,y)
+xy.vector <- NULL
 for(i in 1:100){
   x <- (131*(x)) %% (2^35)
   y <- (131*(y)) %% (2^35)
   xy.vector <- c(xy.vector,x,y)
 }
 xy.vector
-sum(-3.3 < xy.vector & xy.vector < 3.6)/length(xy.vector)
+sum((-3.3 < xy.vector & xy.vector < 3.6))/length(xy.vector)
+#x生成100個和y生成100個裡, 沒有任何一個介在(-3.3, 3.6)裡
  
 
 
@@ -330,23 +331,28 @@ table.method <- function(runs){
 }
 
 p <- table.method(10000)
+proc.time()
 c(p[1]/10000, p[2]/10000, p[3]/10000, p[4]/10000)
 c(x0, x1, x2,x3)
 
 #the Alias method
-alias.run=function(n) {
- temp=NULL
-for (i in 1:n) {
-x=floor(4*runif(1))
-x2=(runif(1) < 2/27)*1
-x3=(runif(1) < 3/27)*1
- x4=(runif(1) < 23/27)*1
- xx=c(0,1,2,3)*c(0,x2,x3,x4)
- y=x-xx[c(x+1)]
-temp=c(temp,y)
-}
-return(temp)
- } 
-alias.run(100)
+alias.run <- function(n) {
+  temp <- NULL
+  for (i in 1:n) {
+    x <- floor(4*runif(1))
+    x1 <- (runif(1) < (27-4)/27)
+    x2 <- (runif(1) < (27-24)/27)
+    x3 <- (runif(1) < (27-25)/27)
+    xx <- c(0,1,2,2)*c(0,x3,x2,x1)
+    y <- x - xx[c(x+1)]
+    temp <- c(temp,y)
+  }
+  cat(x1,x2,x3,"\n")
+  return(temp)
+} 
 
-
+k <- alias.run(10000)
+proc.time()
+k1 <- table(k)
+print(k1/10000)
+c(8/27, 12/27, 6/27, 1/27)
