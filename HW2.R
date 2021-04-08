@@ -14,27 +14,34 @@ gap.test <- function(data, a, b){
   return(list("gaps" = t.y, "expected count" = round(e), "chisq.test" = c.t))
 }
 
-rn10000 <- read.csv("StatisticalSimulation/rn10000.csv", header = F)
-rn10000 <- as.matrix(rn10000)
-gap.test(rn10000, 0.2, 0.7)
-
-
 permutation.test <- function(data){
-  x1 <- matrix(data[-1], ncol = length(data) %/% 3, byrow = F)
+  cond <- length(data) %% 3
+  if(cond == 0){
+    x1 <- matrix(data, ncol = length(data) %/% 3, byrow = F)
+  }else{
+    x1 <- matrix(data[-c(1:cond)], ncol = length(data) %/% 3, byrow = F)
+  }
   y1 <- apply(x1, 2, rank)
   y2 <- y1[1,]*100 + y1[2,]*10 + y1[3,]
-  return(table(y2))
+  c.t <- chisq.test(table(y2))
+  return(c.t)
 }
 
-y <- permutation.test(rn10000)
-chisq.test(y)
+rn.excel <- as.matrix(read.csv("StatisticalSimulation/rn10000.csv", header = F))
+set.seed(2)
+rn.r <- runif(10000)
+gap.test(rn.excel, 0.2, 0.7)
+permutation.test(rn.excel)
+
+gap.test(rn.r, 0.2, 0.7)
+permutation.test(rn.r)
+
 
 #(b)
 updown.test <- function(num,runs){
   k.vector <- NULL
-  p <- 0
-  q <- 0
-  g <- 0
+  n.r <- 0
+  r <- 0
   for(i in 1:runs){
     x <- runif(num)
     x1 <- (x[-1]>x[-num])
@@ -42,34 +49,28 @@ updown.test <- function(num,runs){
     z <- (x2-(2*num-1)/3)/sqrt((16*num-29)/90)
     k <- pnorm(z)
     k.vector <- c(k.vector,k)
-    if(k <= 0.01){
-      p <- p+1
-    }else if(k <= 0.05){
-      q <- q+1
-    }else if(k <= 0.1){
-      g <- g+1
+    if(k > 0.025 & k < 0.975){
+      n.r <- n.r + 1
+    }else{
+      r <- r + 1
     }
   }
-  cat("p-value under 0.01", p,
-      "p-value between 0.01 and 0.05", q,
-      "p-value between 0.05 and 0.1", g,
-      "p-value better than 0.1", runs-p-q-g,
+  cat(paste("Numbers of not reject (alpha=0.05): ", n.r),
+      paste("Numbers of reject (alpha=0.05): ", r),
+      paste("Proportion of not reject: ", n.r/runs),
       sep = "\n")
   return(k.vector)
 }
 
+set.seed(2)
 k <- updown.test(10000, 1000)
-hist(k, xlab = 'p-value', main = 'z.table.pvalue')
-ks.test(k, y = "punif") #reject H0 not uniform
-chisq.test(table(ceiling(k*10))) #reject H0 not uniform
 
 
 #2################################
 #(a)
-pidata <- read.table("StatisticalSimulation/pi.txt", colClasses="character")
+pidata <- readLines("StatisticalSimulation/pi.txt")
 pi.digit <- as.numeric(strsplit(as.character(pidata), "")[[1]][-c(1:2)])
-
-hist(pi.digit)
+barplot(table(pi.digit))
 chisq.test(table(pi.digit))
 gap.test(pi.digit, .2, .8)
 
@@ -77,12 +78,11 @@ gap.test(pi.digit, .2, .8)
 #3################################
 q3 <- read.table("StatisticalSimulation/hw2_3.txt")
 numbers <- as.vector(as.matrix(q3[, -c(1, 9)]))
-hist(numbers)
+hist(numbers, breaks = seq(0, 42, 4.2))
 
 v <- floor(numbers * .25)
 chisq.test(table(v))
 gap.test(numbers, .2, .8)
-
 
 
 #4################################
@@ -229,7 +229,7 @@ sum(-3.3 < xy.vector & xy.vector < 3.6)/length(xy.vector)
  
 
 
-#5
+#5################################
 #(a)
 x <- seq(-10, 10, 0.1)
 c <- max(dcauchy(x)/dt(x, 0.5))
@@ -293,7 +293,7 @@ mean(ks1)
 mean(ks2)
 
 
-#6
+#6################################
 #table.method
 x0 <- dbinom(0,3,1/3) #0.2962
 x1 <- dbinom(1,3,1/3) #0.4444
