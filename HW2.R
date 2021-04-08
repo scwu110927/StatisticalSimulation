@@ -204,10 +204,17 @@ r.norm <- function(runs){
   return(p.value)
 }
 
+set.seed(2)
 a <- boxmuller.method(1000)
 b <- polar.method(1000)
 c <- ratio.of.uniforms(1000)
 d <- r.norm(1000)
+par(mfrow = c(2, 2))
+hist(a, main = 'p-value of ks.test(boxmuller.method)')
+hist(b, main = 'p-value of ks.test(polar.method)')
+hist(c, main = 'p-value of ks.test(ratio.of.uniforms)')
+hist(d, main = 'p-value of ks.test(r.norm)')
+ks.test(a, "punif")
 
 #best is rnorm 
   
