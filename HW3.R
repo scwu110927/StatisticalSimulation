@@ -1,3 +1,5 @@
+
+#1####
 library(ISR3)
 x1 <- c(rep(1300,6),rep(1200,6), rep(1100,4))
 x2 <- c(7.5, 9.0, 11.0, 13.5, 17.0,
@@ -12,7 +14,7 @@ y <- c(49.0, 50.2, 50.5, 48.5, 47.5,
        44.5, 28.0, 31.5, 34.5, 35.0,
        38.0, 38.5, 15.0, 17.0, 20.5,
        29.5)
-cbind(X,X)
+
 x4 <- x1 * x1
 x5 <- x2 * x2
 x6 <- x3 * x3
@@ -25,7 +27,7 @@ X <- matrix(c(rep(1,16), x1, x2, x3, x4, x5, x6, x7, x8, x9), ncol = 10)
 #Cholesky
 A <- t(X) %*% X
 L <- t(chol(A))
-B <- solve(t(L), solve(L, t(X) %*% y)) #theta == solve(L, t(X) %*% y)
+B <- solve(t(L), solve(L, t(X) %*% y)) 
 B
 
 #SWEEP
@@ -36,7 +38,7 @@ M2
 #M2[11,11] variance estimate
 #M2[1:10,11] = B
 XX <- -M2[1:10,1:10]
-sqrt(diag(XX * (M2[11,11]/12))) #sd???
+sqrt(diag(XX * (M2[11,11]/6))) #sd???
 
 g <- lm(y~x1+x2+x3+x4+x5+x6+x7+x8+x9)
 summary(g)
