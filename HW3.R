@@ -171,13 +171,21 @@ library(bootstrap)
 law.bs <- function(x,y){
   t1 <- NULL
   t2 <- NULL
+  
   for (i in y) { 
     x1 <- sample(1:15, x, T)
     x2 <- law[x1,]
     x3 <- array(apply(x2, 2, var))
     t1 <- c(t1, x3[1]) 
     t2 <- c(t2, x3[2])
+    
   }
+  my_list <- list("Original Variance (LSAT & GPA)" = c(var(law$LSAT), var(law$GPA)),
+                  "Bootstrap Variance (LSAT & GPA) of 10 r.v" =  ,
+                  "Bootstrap Variance (LSAT & GPA) of 15 r.v" =  ,
+                  "Bootstrap Variance (LSAT & GPA) of 20 r.v" =  ,
+                  "Bootstrap Variance (LSAT & GPA) of 25 r.v" =  )
+  return(my_list)
   return(c(mean(t1), mean(t2)))
 }
 
