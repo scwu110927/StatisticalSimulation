@@ -1,6 +1,5 @@
 #HW3
 #1################################
-
 library(ISR3)
 x1 <- c(rep(1300,6),rep(1200,6), rep(1100,4))
 x2 <- c(7.5, 9.0, 11.0, 13.5, 17.0,
@@ -35,9 +34,7 @@ round(B, 2)
 M <- matrix(rbind(cbind(A, t(X) %*% y), cbind(t(y) %*% X, t(y) %*% y)), nrow = 11)
 M2 <- SWP(M, 1:10)
 M2
-#M2[1:10,1:10] = -Solve(A) 
-#M2[11,11] variance estimate
-#M2[1:10,11] = B
+
 XX <- -M2[1:10,1:10]
 round(sqrt(diag(XX * (M2[11,11]/6))) , 2)
 
@@ -61,124 +58,78 @@ fit.k <- ar.ols(k, order = 1)
 pred.k <- NULL
 p.k <- k[19]
 for(i in 1:5){
-        p.k <- fit.k$x.intercept + fit.k$ar * p.k
-        pred.k <- c(pred.k, p.k)
+  p.k <- fit.k$x.intercept + fit.k$ar * p.k
+  pred.k <- c(pred.k, p.k)
 }
-
 xnew.appr <- pred.k %*% t(b)
+round(xnew.appr, 2)
 xnew <- scale(log(mortality[mortality$year > 99, -1]), scale = FALSE)
 sum((xnew - xnew.appr)^2)
+
 
 pca.x <- princomp(x)
 
 #4################################
-
-#4-1 
-#H0:兩變數間無關
-#H1:兩變數間有關
-#DDT,egg data
+#(a)
+library(gtools)
 DDT <- c(65, 98, 117, 122, 130)
 egg <- c(0.52, 0.53, 0.49, 0.49, 0.37)
-
-library(gtools)
 p <- permutations(5,5)
 DDT2 <- matrix(DDT[t(p)], byrow = T ,ncol = 5)
-length(which(DDT2 %*% sort(egg) <= sum(DDT * egg)))/nrow(DDT2) #p-value
-#0.033333
+length(which(DDT2 %*% sort(egg) <= sum(DDT * egg)))/nrow(DDT2) 
+cor.test(DDT, egg, method = "pearson") 
+cor.test(DDT, egg, method ="spearman") 
 
-cor.test(DDT, egg, method = "pearson") #常態假設,0.2225
-cor.test(DDT, egg, method = "kendall") #pvalue跟老師不同
 
-#x,y data
 x <- c(585, 1002, 472, 493, 408, 690, 291)
 y <- c(0.1, 0.2, 0.5, 1, 1.5, 2, 3)
-
 p2 <- permutations(7,7)
 x2 <- matrix(x[t(p2)], byrow = T, ncol = 7)
 length(which(x2 %*% sort(y) <= sum(x * y)))/nrow(x2)
-
-cor.test(x, y, method="pearson") #常態假設
+cor.test(x, y, method="pearson") 
 cor.test(x, y, method="spearman") 
 
-#解釋
-
-#4-2
-#cor = 0.2
-A <- matrix(c(1, 0.2, 0.2, 1), ncol=2)
-B <- t(chol(A))
-a <- B[2,1]
-b <- B[2,2]
-
-t1 <- NULL
-t2 <- NULL
-t3 <- NULL
-for (i in 1:1000) { #10000次當機
-  x1 <- rnorm(10)
-  x2 <- rnorm(10)
-  x <- rbind(x1, x2)
-  xy <- B %*% x
-  y <- xy[2,] #Simulate a set of two correlated normal
-  x1 <- floor(10*pnorm(x1)) #回傳小數點第一位floor(0-9)
-  y1 <- floor(10*pnorm(y))
-  z1 <- cor.test(x1, y1, method = "pearson")$p.value
-  z2 <- cor.test(x1, y1, method = "spearman")$p.value
-  t1 <- c(t1, z1)
-  t2 <- c(t2, z2)
-  #permutation test
-  t <- NULL
-  z0 <- sum(x1*y1)
-  for (j in 1:1000) {
-    x0 <- sample(x1, 10, F)
-    y0 <- sample(y1, 10, F)
-    t <- c(t, sum(x0*y0))
+#(b)
+choln2u <- function(rho = 0.2){
+  A <- matrix(c(1, rho, rho, 1), ncol=2)
+  B <- t(chol(A))
+  t1 <- NULL
+  t2 <- NULL
+  t3 <- NULL
+  for (i in 1:100) { 
+    x1 <- rnorm(10)
+    y1 <- rnorm(10)
+    xy1 <- rbind(x1, y1)
+    xy <- B %*% xy1
+    xy.unif <- floor(10*pnorm(xy)) 
+    z1 <- cor.test(xy.unif[1, ], xy.unif[2, ], method = "pearson")$p.value
+    z2 <- cor.test(xy.unif[1, ], xy.unif[2, ], method = "spearman")$p.value
+    t1 <- c(t1, z1)
+    t2 <- c(t2, z2)
+    t <- NULL
+    z0 <- sum(x1*y1)
+    for (j in 1:1000) {
+      x0 <- sample(x1, 10, F)
+      y0 <- sample(y1, 10, F)
+      t <- c(t, sum(x0*y0))
+    }
+    z3 <- sum(t >= z0)/1000
+    t3 <- c(t3, z3)
   }
-  z3 <- sum(t>z0)/1000 
-  t3 <- c(t3, z3)
+  print(paste('pearson p<0.05個數:', length(t1[t1<0.05])))
+  print(paste('spearman p<0.05個數:', length(t2[t2<0.05])))
+  print(paste('permutation test p<0.05個數:', length(t2[t2<0.05])))
 }
 
-length(t1[t1<0.1]) #pearson p<0.1個數
-length(t1[t1<0.05]) #pearson p<0.05個數
-length(t2[t2<0.1]) #spearman p<0.1個數
-length(t2[t2<0.05]) #spearman p<0.05 個數
-length(t3[t3<0.1]) #permutation p<0.1 個數
-length(t3[t3<0.05]) #permutation test p<0.05 個數
+choln2u(0.2)
+choln2u(0.8)
 
-#cor = 0.8
-A <- matrix(c(1, 0.8, 0.8, 1), ncol=2)
-B <- t(chol(A))
-a <- B[2,1]
-b <- B[2,2]
+#5################################
 
-t1 <- NULL
-t2 <- NULL
-t3 <- NULL
-for (i in 1:1000) { #10000次當機
-  x1 <- rnorm(10)
-  x2 <- rnorm(10)
-  x <- rbind(x1, x2)
-  xy <- B %*% x
-  y <- xy[2,] #Simulate a set of two correlated normal
-  x1 <- floor(10*pnorm(x1)) #回傳小數點第一位floor(0-9)
-  y1 <- floor(10*pnorm(y))
-  z1 <- cor.test(x1, y1, method = "pearson")$p.value
-  z2 <- cor.test(x1, y1, method = "spearman")$p.value
-  t1 <- c(t1, z1)
-  t2 <- c(t2, z2)
-  #permutation test
-  t <- NULL
-  z0 <- sum(x1*y1)
-  for (j in 1:1000) {
-    x0 <- sample(x1, 10, F)
-    y0 <- sample(y1, 10, F)
-    t <- c(t, sum(x0*y0))
-  }
-  z3 <- sum(t>z0)/1000 
-  t3 <- c(t3, z3)
-}
 
-length(t1[t1<0.1]) #pearson p<0.1個數
-length(t1[t1<0.05]) #pearson p<0.05個數
-length(t2[t2<0.1]) #spearman p<0.1個數
-length(t2[t2<0.05]) #spearman p<0.05 個數
-length(t3[t3<0.1]) #permutation p<0.1 個數
-length(t3[t3<0.05]) #permutation test p<0.05 個數
+#6################################
+library(bootstrap)
+law 
+
+
+
