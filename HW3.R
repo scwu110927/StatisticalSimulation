@@ -71,3 +71,114 @@ sum((xnew - xnew.appr)^2)
 
 pca.x <- princomp(x)
 
+#4################################
+
+#4-1 
+#H0:兩變數間無關
+#H1:兩變數間有關
+#DDT,egg data
+DDT <- c(65, 98, 117, 122, 130)
+egg <- c(0.52, 0.53, 0.49, 0.49, 0.37)
+
+library(gtools)
+p <- permutations(5,5)
+DDT2 <- matrix(DDT[t(p)], byrow = T ,ncol = 5)
+length(which(DDT2 %*% sort(egg) <= sum(DDT * egg)))/nrow(DDT2) #p-value
+#0.033333
+
+cor.test(DDT, egg, method = "pearson") #常態假設,0.2225
+cor.test(DDT, egg, method = "kendall") #pvalue跟老師不同
+
+#x,y data
+x <- c(585, 1002, 472, 493, 408, 690, 291)
+y <- c(0.1, 0.2, 0.5, 1, 1.5, 2, 3)
+
+p2 <- permutations(7,7)
+x2 <- matrix(x[t(p2)], byrow = T, ncol = 7)
+length(which(x2 %*% sort(y) <= sum(x * y)))/nrow(x2)
+
+cor.test(x, y, method="pearson") #常態假設
+cor.test(x, y, method="spearman") 
+
+#解釋
+
+#4-2
+#cor = 0.2
+A <- matrix(c(1, 0.2, 0.2, 1), ncol=2)
+B <- t(chol(A))
+a <- B[2,1]
+b <- B[2,2]
+
+t1 <- NULL
+t2 <- NULL
+t3 <- NULL
+for (i in 1:1000) { #10000次當機
+  x1 <- rnorm(10)
+  x2 <- rnorm(10)
+  x <- rbind(x1, x2)
+  xy <- B %*% x
+  y <- xy[2,] #Simulate a set of two correlated normal
+  x1 <- floor(10*pnorm(x1)) #回傳小數點第一位floor(0-9)
+  y1 <- floor(10*pnorm(y))
+  z1 <- cor.test(x1, y1, method = "pearson")$p.value
+  z2 <- cor.test(x1, y1, method = "spearman")$p.value
+  t1 <- c(t1, z1)
+  t2 <- c(t2, z2)
+  #permutation test
+  t <- NULL
+  z0 <- sum(x1*y1)
+  for (j in 1:1000) {
+    x0 <- sample(x1, 10, F)
+    y0 <- sample(y1, 10, F)
+    t <- c(t, sum(x0*y0))
+  }
+  z3 <- sum(t>z0)/1000 
+  t3 <- c(t3, z3)
+}
+
+length(t1[t1<0.1]) #pearson p<0.1個數
+length(t1[t1<0.05]) #pearson p<0.05個數
+length(t2[t2<0.1]) #spearman p<0.1個數
+length(t2[t2<0.05]) #spearman p<0.05 個數
+length(t3[t3<0.1]) #permutation p<0.1 個數
+length(t3[t3<0.05]) #permutation test p<0.05 個數
+
+#cor = 0.8
+A <- matrix(c(1, 0.8, 0.8, 1), ncol=2)
+B <- t(chol(A))
+a <- B[2,1]
+b <- B[2,2]
+
+t1 <- NULL
+t2 <- NULL
+t3 <- NULL
+for (i in 1:1000) { #10000次當機
+  x1 <- rnorm(10)
+  x2 <- rnorm(10)
+  x <- rbind(x1, x2)
+  xy <- B %*% x
+  y <- xy[2,] #Simulate a set of two correlated normal
+  x1 <- floor(10*pnorm(x1)) #回傳小數點第一位floor(0-9)
+  y1 <- floor(10*pnorm(y))
+  z1 <- cor.test(x1, y1, method = "pearson")$p.value
+  z2 <- cor.test(x1, y1, method = "spearman")$p.value
+  t1 <- c(t1, z1)
+  t2 <- c(t2, z2)
+  #permutation test
+  t <- NULL
+  z0 <- sum(x1*y1)
+  for (j in 1:1000) {
+    x0 <- sample(x1, 10, F)
+    y0 <- sample(y1, 10, F)
+    t <- c(t, sum(x0*y0))
+  }
+  z3 <- sum(t>z0)/1000 
+  t3 <- c(t3, z3)
+}
+
+length(t1[t1<0.1]) #pearson p<0.1個數
+length(t1[t1<0.05]) #pearson p<0.05個數
+length(t2[t2<0.1]) #spearman p<0.1個數
+length(t2[t2<0.05]) #spearman p<0.05 個數
+length(t3[t3<0.1]) #permutation p<0.1 個數
+length(t3[t3<0.05]) #permutation test p<0.05 個數
