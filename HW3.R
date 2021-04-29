@@ -171,24 +171,12 @@ library(bootstrap)
 law.bs <- function(x,y){
   t1 <- NULL
   t2 <- NULL
-  x1 <- sample(1:15, x, T)
   for (i in y) { 
-    xx <- sample(x1, x, T)
-    x2 <- law[xx,]
-    x3 <- apply(x2, 2, mean)
+    x1 <- sample(1:15, x, T)
+    x2 <- law[x1,]
+    x3 <- apply(x2, 2, variance)
     t1 <- c(t1, x3[,1]) 
     t2 <- c(t2, x3[,2])
   }
-  t3 <- var(t1)
-  t4 <- var(t2)
-  return(c(t3,t4))
+  return(c(mean(t1), mean(t2)))
 }
-
-x11 <- law.bs(10, 100)
-x12 <- law.bs(10, 300)
-x13 <- law.bs(10, 500)
-x14 <- law.bs(10, 1000)
-x21 <- law.bs(15, 100)
-x22 <- law.bs(15, 300)
-x23 <- law.bs(15, 500)
-x24 <- law.bs(15, 1000)
