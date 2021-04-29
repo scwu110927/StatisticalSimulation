@@ -44,6 +44,30 @@ round(sqrt(diag(XX * (M2[11,11]/6))) , 2)
 g <- lm(y~x1+x2+x3+x4+x5+x6+x7+x8+x9)
 summary(g)
 
+#2################################
 plot(lynx, type= 'l', main = 'Time series plot of Lynx')
 ar.ols(lynx, order = 1)
 ar.ols(lynx, order = 2)
+
+
+#3################################
+library(forecast)
+mortality <- read.csv("StatisticalSimulation/malemortality.csv", h = T)
+x <- scale(log(mortality[mortality$year <= 99, -1]), scale = FALSE)
+svd.x <- svd(x, 1, 1)
+b <- svd.x$v
+k <- svd.x$u * svd.x$d[1]
+fit.k <- ar.ols(k, order = 1)
+pred.k <- NULL
+p.k <- k[19]
+for(i in 1:5){
+        p.k <- fit.k$x.intercept + fit.k$ar * p.k
+        pred.k <- c(pred.k, p.k)
+}
+
+xnew.appr <- pred.k %*% t(b)
+xnew <- scale(log(mortality[mortality$year > 99, -1]), scale = FALSE)
+sum((xnew - xnew.appr)^2)
+
+pca.x <- princomp(x)
+
