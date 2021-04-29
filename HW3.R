@@ -125,6 +125,44 @@ choln2u(0.2)
 choln2u(0.8)
 
 #5################################
+MWWTest = function(seq1, seq2){
+  seq = c(seq1, seq2)
+  n1 = length(seq1)
+  n2 = length(seq2)
+  
+  r1 = rank(seq)[1:n1]
+  r2 = rank(seq)[-c(1:n1)]
+  
+  W1 = sum(r1)
+  W2 = sum(r2)
+  
+  U1 = n1 * n2 + (n1 * (n1 + 1) / 2) - W1
+  U2 = n1 * n2 + (n2 * (n2 + 1) / 2) - W2
+  
+  U = min(U1, U2)
+  Z = (U - n1 * n2 / 2) / sqrt(n1 * n2 * (n1 + n2 +1) / 12)
+  df = data.frame(U1, U2)
+  return (U1)
+}
+
+data = NULL
+for (i in 2:10){
+  for (j in 2:10){
+    x = NULL
+    for (k in 1:10000){
+      y = MWWTest(runif(i), runif(j))
+      x = c(x, y)
+    }
+    data = cbind(data, sort(as.numeric(x)))
+  }
+}
+
+df = data.frame(data, row.names = c(1:10000))
+critical = df[500, ]
+cri_mat = matrix(critical, ncol = 9, byrow = TRUE)
+cri_df = data.frame(cri_mat, row.names = c(2:10))
+colnames(cri_df) = c(2:10)
+print(cri_df)
 
 
 #6################################
