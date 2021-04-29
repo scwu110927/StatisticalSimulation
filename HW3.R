@@ -1,5 +1,6 @@
+#HW3
+#1################################
 
-#1####
 library(ISR3)
 x1 <- c(rep(1300,6),rep(1200,6), rep(1100,4))
 x2 <- c(7.5, 9.0, 11.0, 13.5, 17.0,
@@ -28,7 +29,7 @@ X <- matrix(c(rep(1,16), x1, x2, x3, x4, x5, x6, x7, x8, x9), ncol = 10)
 A <- t(X) %*% X
 L <- t(chol(A))
 B <- solve(t(L), solve(L, t(X) %*% y)) 
-B
+round(B, 2)
 
 #SWEEP
 M <- matrix(rbind(cbind(A, t(X) %*% y), cbind(t(y) %*% X, t(y) %*% y)), nrow = 11)
@@ -38,10 +39,11 @@ M2
 #M2[11,11] variance estimate
 #M2[1:10,11] = B
 XX <- -M2[1:10,1:10]
-sqrt(diag(XX * (M2[11,11]/6))) #sd???
+round(sqrt(diag(XX * (M2[11,11]/6))) , 2)
 
 g <- lm(y~x1+x2+x3+x4+x5+x6+x7+x8+x9)
 summary(g)
 
-
-
+plot(lynx, type= 'l', main = 'Time series plot of Lynx')
+ar.ols(lynx, order = 1)
+ar.ols(lynx, order = 2)
