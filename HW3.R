@@ -190,7 +190,25 @@ law.bs <- function(x,y){
 }
 
 
-
+law.bs <- function(x,y){
+  t1 <- NULL
+  t2 <- NULL
+  t3 <- NULL
+  t4 <- NULL
+  for(j in 1:20){
+    k <- 50*j
+    for (i in k) { 
+      x1 <- sample(1:15, x, T)
+      x2 <- law[x1,]
+      x3 <- array(apply(x2, 2, var))
+      t1 <- c(t1, x3[1]) 
+      t2 <- c(t2, x3[2])
+    }
+    t3 <- c(t3, mean(t1))
+    t4 <- c(t4, mean(t2))
+  }
+  return(cbind(t3, t4))
+}
 
 
 
