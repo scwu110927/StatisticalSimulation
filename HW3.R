@@ -149,7 +149,7 @@ data = NULL
 for (i in 2:10){
   for (j in 2:10){
     x = NULL
-    for (k in 1:10000){
+    for (k in 1:100){
       y = MWWTest(runif(i), runif(j))
       x = c(x, y)
     }
@@ -157,7 +157,7 @@ for (i in 2:10){
   }
 }
 
-df = data.frame(data, row.names = c(1:10000))
+df = data.frame(data, row.names = c(1:100))
 critical = df[500, ]
 cri_mat = matrix(critical, ncol = 9, byrow = TRUE)
 cri_df = data.frame(cri_mat, row.names = c(2:10))
@@ -167,30 +167,7 @@ print(cri_df)
 
 #6################################
 library(bootstrap)
-
-law.bs <- function(x,y){
-  t1 <- NULL
-  t2 <- NULL
-  
-  for (i in y) { 
-    x1 <- sample(1:15, x, T)
-    x2 <- law[x1,]
-    x3 <- array(apply(x2, 2, var))
-    t1 <- c(t1, x3[1]) 
-    t2 <- c(t2, x3[2])
-    
-  }
-  my_list <- list("Original Variance (LSAT & GPA)" = c(var(law$LSAT), var(law$GPA)),
-                  "Bootstrap Variance (LSAT & GPA) of 10 r.v" =  ,
-                  "Bootstrap Variance (LSAT & GPA) of 15 r.v" =  ,
-                  "Bootstrap Variance (LSAT & GPA) of 20 r.v" =  ,
-                  "Bootstrap Variance (LSAT & GPA) of 25 r.v" =  )
-  return(my_list)
-  return(c(mean(t1), mean(t2)))
-}
-
-
-law.bs <- function(x,y){
+law.bs <- function(x){
   t1 <- NULL
   t2 <- NULL
   t3 <- NULL
@@ -212,6 +189,7 @@ law.bs <- function(x,y){
   p2 <- rbind(plot(t4, type = 'l'), abline(h = var(law$GPA), lty = 2))
   return(list(p1, p2))
 }
+
 law.bs(10)
 law.bs(15)
 law.bs(20)
