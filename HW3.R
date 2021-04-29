@@ -195,7 +195,7 @@ law.bs <- function(x,y){
   t2 <- NULL
   t3 <- NULL
   t4 <- NULL
-  for(j in 1:20){
+  for(j in 1:200){
     k <- 50*j
     for (i in k) { 
       x1 <- sample(1:15, x, T)
@@ -207,8 +207,15 @@ law.bs <- function(x,y){
     t3 <- c(t3, mean(t1))
     t4 <- c(t4, mean(t2))
   }
-  return(cbind(t3, t4))
+  par(mfrow=c(1,2))
+  p1 <- rbind(plot(t3, type = 'l'), abline(h = var(law$LSAT), lty = 2))
+  p2 <- rbind(plot(t4, type = 'l'), abline(h = var(law$GPA), lty = 2))
+  return(list(p1, p2))
 }
+law.bs(10)
+law.bs(15)
+law.bs(20)
+law.bs(25)
 
 
 
