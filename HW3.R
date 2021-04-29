@@ -174,9 +174,15 @@ law.bs <- function(x,y){
   for (i in y) { 
     x1 <- sample(1:15, x, T)
     x2 <- law[x1,]
-    x3 <- apply(x2, 2, variance)
-    t1 <- c(t1, x3[,1]) 
-    t2 <- c(t2, x3[,2])
+    x3 <- array(apply(x2, 2, var))
+    t1 <- c(t1, x3[1]) 
+    t2 <- c(t2, x3[2])
   }
   return(c(mean(t1), mean(t2)))
 }
+
+
+
+
+
+
