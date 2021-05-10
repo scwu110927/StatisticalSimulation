@@ -1,22 +1,20 @@
 #HW4
 #1################################
 data <- sunspot.year
-train.data <- data[1:279]
+train.data <- data[9:279]
 test.data <- data[280:289]
 
 zeroma <- matrix(0, 10000, ncol = 10)
-dr <- train.data[-1] - train.data[-279]
+dr <- train.data[-1] - train.data[-271]
 
-set.seed(10)
 for(i in 1:10000){
-  sa <- sample(1:269, 1)
+  sa <- sample(1:27, 1)*10-9
   zeroma[i,] <- dr[c(sa:(sa+9))] 
 }
 md <- apply(zeroma, 2, median)
 predict.value <- NULL
 for(i in 1:10){
-  predict.value <- c(predict.value, 
-                     train.data[279] + sum(md[c(1:i)]))
+  predict.value <- c(predict.value, data[279] + sum(md[c(1:i)]))
 }
 b <- ts(predict.value, frequency = 1 ,start = c(1979,1))
 
@@ -95,7 +93,7 @@ bisection <- function(f, a, b){
       cat('Root:', b1,  'n:', j+1)
     }else if(f(a1) * f(b1) < 0){
       repeat{
-        if(abs(b1 - a1) < 1e-5){break} 
+        if(abs(b1 - a1) < 1e-6){break} 
           c <- (a1 + b1)/2
         if(f(a1) * f(c) < 0){
           b1 <- c
@@ -129,27 +127,30 @@ false.posi <- function(f, init1, init2, maxiter=1000, tol=1e-06) {
   list(root = init2[1], f.root = init2[2], iter = i)
 }
 
+curve(func.a, xlim = c(-3,3), lwd = 2)
+abline(h=0, lty = 2)
+points(0.275, 0, cex = 2, pch = 21, bg = 1)
 bisection(func.a, -4, 3) 
-curve(func.a, xlim = c(-3,3), lwd = 1.5, lty = 2)
-abline(h=0)
-polyroot(c(-1, 3, 2, 1)) 
-uniroot(func.a, c(-4, 3)) 
 false.posi(func.a, -4, 3)
+uniroot(func.a, c(-4, 3)) 
 
-bisection(func.b, -4, 3) 
-bisection(func.b, -3.4, 3) 
-curve(func.b, xlim = c(-5,2), lwd = 1.5, lty = 2)
-abline(h=0)
-uniroot(func.b, c(-3.4, -2)) 
+curve(func.b, xlim = c(-5,-2), lwd = 2)
+abline(h=0, lty = 2)
+points(-3.132, 0, cex = 2, pch = 21, bg = 1)
+bisection(func.b, -3.4, -2) 
 false.posi(func.b, -3.4, -2)
+uniroot(func.b, c(-3.4, -2))
 
-bisection(func.c, -4, 3) 
-curve(func.c, xlim = c(-2,2), lwd = 1.5, lty = 2)
-abline(h=0)
-uniroot(func.c, c(-2, -1)) 
-uniroot(func.c, c(1, 0)) 
+curve(func.c, xlim = c(-2,2), lwd = 2)
+abline(h=0, lty = 2)
+points(-1.315, 0, cex = 2, pch = 21, bg = 1)
+points(0.398, 0, cex = 2, pch = 21, bg = 1)
+bisection(func.c, -2, 1) 
 false.posi(func.c, -2, -1)
-false.posi(func.c, 1, 0)
+false.posi(func.c, 0, 1)
+uniroot(func.c, c(-2, -1)) 
+uniroot(func.c, c(0, 1)) 
+
 
 
 #4################################
