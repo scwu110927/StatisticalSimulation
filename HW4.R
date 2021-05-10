@@ -4,7 +4,6 @@ data <- sunspot.year
 train.data <- data[1:279]
 test.data <- data[280:289]
 
-
 zeroma <- matrix(0, 10000, ncol = 10)
 dr <- train.data[-1] - train.data[-279]
 
@@ -25,62 +24,50 @@ x <- ar.ols(train.data, order = 2)
 z <- predict(x, n.ahead = 10)
 a <- ts(z$pred, frequency = 1 ,start = c(1979,1))
 
-ts.plot(data, a, b, ylab ="Sunspot", col=c("gray47", "red", "blue"))
-legend(1700, 195,                                
-       lty=1:1,                                   
-       col = c("black", "red", "blue"),        
-       legend = c("Data", "AR(2)", "Block"), cex = 0.75)
+ts.plot(data, a, b, ylab ="Sunspot", lty = 1:3, 
+        main = "Prediction last 10 year of Sunspot with Block Bootstrap & AR(2)")
+legend(1700, 195, lty = 1:3, legend = c("Data", "AR(2)", "Block"), cex = 0.75)
 
 
 #2################################
-ano.pvalue <- function(mu=0, sigma=1, n){
-  p.vector <- NULL
-  power.v <- NULL
-  #k <- 0
+type1.test <- function(n){
+  type1.vector <- NULL
   for(i in 1:n){
-    x <- matrix(rnorm(48), nrow = 3, byrow = T)
-    x[2,] <- rnorm(16, mu, sigma)
-    mui <- apply(x,1,mean)
-    mu <- mean(x)
-    mstr <- sum(16*(mu-mui)^2)/2
-    mse <- (sum((x-mu)^2)-mstr*2)/45
-    f <- mstr/mse
-    p <- pf(f, 2, 45, lower.tail = F)
-    power <- ?power.anova.test(groups = 3, n = 16, between.var = mstr, 
-                              within.var = mse, sig.level = p)$power
-    p.vector <- c(p.vector, p)
-    power.v <- c(power.v, power)
+    x <- cbind(rep(1:3, each = 16), rnorm(48))
+    fit <- lm(x[, 2] ~ factor(x[, 1]))
+    type1 <- anova(fit)$"Pr(>F)"[1]
+    type1.vector <- c(type1.vector, type1)
   }
-  return(cbind(p.vector,power.v))
+  return(type1.vector)
 }
-a <- ano.pvalue(n=1000)
-b <- ano.pvalue(sigma=sqrt(2),n=1000)
 
-hist(a[,1])
-hist(a[,2])
-mean(a[,2])
-hist(b[,1])
-ks.test(a[,1], "punif")
-ks.test(b[,1], "punif")
+type1 <- type1.test(n=1000)
+hist(type1, main = "Type I Error with all zero means in simu 1000 times")
+ks.test(type1, 'punif')
 
-
-ano.pvalue <- function(mu=0, sigma=1, n){
-  p.vector <- NULL
-  power.v <- NULL
-  #k <- 0
-  for(i in 1:n){
-    x <- cbind(rep(1:3, each = 16),
-               c(rnorm(32), rnorm(16, mu, sigma)))
-    fit <- anova(lm(x[, 2] ~ factor(x[, 1])))
-    ms <- fit$"Mean Sq"
-    p <- fit$"Pr(>F)"[1]
-    power <- power.anova.test(groups = 3, n = 16, between.var = ms[1], 
-                              within.var = ms[2])$power
-    p.vector <- c(p.vector, p)
-    power.v <- c(power.v, power)
+power.test <- function(sigma = 1, n){
+  power.vector <- NULL
+  mu <- seq(0, 2, .2)
+  for(i in 1:length(mu)){
+    power.sum <- 0
+    for(j in 1:n){
+    x <- cbind(rep(1:3, each = 16), c(rnorm(32), rnorm(16, mu[i], sigma)))
+    fit <- lm(x[, 2] ~ factor(x[, 1]))
+    F.value <- anova(fit)$'F value'[1]
+    power <- pf(qf(.95, 2, 45), 2, 45, ncp=F.value*2, lower.tail = F)
+    power.sum <- power.sum + power
+    }
+    power.vector <- c(power.vector, mean(power.sum))
   }
-  return(cbind(p.vector,power.v))
+  return(cbind(mu, power.vector))
 }
+
+constant.var <- power.test(n = 1000)
+nonconstant.var <- power.test(sigma = sqrt(2), n = 1000)
+plot(constant.var, type = 'l', 
+     main = "Compare Constant and Non-Constant Variance with Power in simu 1000 times")
+lines(nonconstant.var, lty = 2)
+legend('topleft', lty = 1:2, legend = c("Constant variance", "Non-Constant variance"))
 
 
 #3################################
