@@ -222,3 +222,24 @@ newton.raphson(mitinom.loglike, .01)
 f=function(x) { x+1/x }
 nlminb(start=2,obj=f,lower=0)
 
+k<- read.csv("./hw4/Life table 108male.CSV", header = T)
+y <- log(-log(1-as.numeric(k[2:86,2])))
+x <- as.numeric(k[2:86,1])
+
+#weights nx
+g <- lm(y~x, weights = as.numeric(k[2:86, 3]))
+summary(g)
+beta <- g$coefficients[2]
+alpha <- g$coefficients[1]
+c <- exp(beta)
+b <- exp(alpha + log(log(c)) - log(c - 1))
+b*c
+
+#weights sqrt(nx)
+g1 <- lm(y~x, weights = sqrt(as.numeric(k[2:86, 3])))
+summary(g1)
+beta_1 <- g1$coefficients[2]
+alpha_1 <- g1$coefficients[1]
+c_1 <- exp(beta_1)
+b_1 <- exp(alpha_1 + log(log(c_1)) - log(c_1 - 1))
+b_1*c_1
