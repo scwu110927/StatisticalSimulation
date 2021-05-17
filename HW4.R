@@ -157,8 +157,9 @@ uniroot(func.c, c(0, 1))
 mitinom.loglike <- function(theta){
   1997/(2+theta) - 906/(1-theta) - 904/(1-theta) + 32/(theta)
 }
-curve(mitinom.loglike, from=-0.3, to=0.3)
-abline(h=0)
+curve(mitinom.loglike, from=-0.3, to=0.3, lwd = 2)
+abline(h=0, lty = 2)
+points(0.03571232, 0, cex = 2, pch = 21, bg = 1)
 
 secant <- function(f, init1, init2, maxiter=1000, tol=1e-06){
   init1[2] <- f(init1)
@@ -210,12 +211,11 @@ newton.raphson <- function(f, init, maxiter=1000, tol=1e-06){
   list(root = init.next, f.root = f(init.next), iter = i)
 }
 
-uniroot(mitinom.loglike, c(0.01, 0.99), tol = 1e-06) 
+uniroot(mitinom.loglike, c(0.01, 0.99), tol = 1e-06)
 secant(mitinom.loglike, .01, .99)
-#secant(mitinom.loglike, .01, .1)
 ridder(mitinom.loglike, .01, .99)
 newton.raphson(mitinom.loglike, .01)
-#newton.raphson(mitinom.loglike, .1)
+
 
 #5################################
 
