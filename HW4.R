@@ -238,48 +238,31 @@ write.table(long, file = "StatisticalSimulation/maledeathrates2.CSV",
             sep=",", row.names = F, na = "NA")
 
 long <- read.csv("StatisticalSimulation/maledeathrates2.csv", header = T)
-p <- long$p/1000
-llp <- log(-log(1-p))
+p <- 1-long$p/1000
+llp <- log(-log(p))
 d <- long$d
 x <- long$year
 n <- as.numeric(long$n)
 
-
-#weights nx
-g <- lm(llp ~ x, weights = n)
-summary(g)
-beta <- g$coefficients[2]
-alpha <- g$coefficients[1]
-c <- exp(beta)
-b <- exp(alpha + log(log(c)) - log(c - 1))
-b*c
-
-#weights sqrt(nx)
-g1 <- lm(y~x, weights = sqrt(as.numeric(k[2:86, 3])))
-summary(g1)
-beta_1 <- g1$coefficients[2]
-alpha_1 <- g1$coefficients[1]
-c_1 <- exp(beta_1)
-b_1 <- exp(alpha_1 + log(log(c_1)) - log(c_1 - 1))
-b_1*c_1
-
-
 wls <- function(par) { 
   x1 <- par[1]
   x2 <- par[2] 
-  sum(w*(y-x1-x2*x)^2) }
-nlminb(start=c(-10, 1), obj=f)
+  sum(n*(llp-x1-x2*x)^2) }
+root <- nlminb(start=c(0, 0), obj = wls)
+(c <- exp(root[[1]][2]))
+(b <- exp(root[[1]][1] + log(log(c)) - log(c - 1)))
+15078.4/301
 
 nlm <- function(par) { 
   x1 <- par[1]
   x2 <- par[2] 
-  sum(w*(y2-exp(-x1*(x2^x)*(x2-1)/log(x2)))^2) }
-nlminb(start=c(0.5, 2), obj=f)
+  sum(n*(p-exp(-x1*(x2^x)*(x2-1)/log(x2)))^2) }
+nlminb(start=c(0.01, 1.04), obj = nlm)
 
 mle <- function(par) { 
   x1 <- par[1]
   x2 <- par[2] 
-  sum((w-d)*x1*x2^x*(x2-1)/log(x2)-d*log(1-exp(-x1*(x2^x)*(x2-1)/log(x2)))) }
-nlminb(start=c(0.5, 2), obj=f)
+  sum(((n-d)*x1*(x2^x)*(x2-1)/log(x2)-d*log(1-exp(-x1*(x2^x)*(x2-1)/log(x2)))))^2}
+nlminb(start=c(0.01, 1.04), obj = mle)
 
 
