@@ -219,15 +219,16 @@ newton.raphson(mitinom.loglike, .01)
 
 #5################################
 
-f=function(x) { x+1/x }
-nlminb(start=2,obj=f,lower=0)
+k <- read.csv("StatisticalSimulation/Life table 108male.CSV", header = T, skip = 1)
+y <- log(-log(1-k[-86, 2]))
+y2 <- 1-k[-86, 2]
+d <- k[-86, 4]
+x <- k[-86, 1]
+w <- k[-86, 3]
 
-k<- read.csv("./hw4/Life table 108male.CSV", header = T)
-y <- log(-log(1-as.numeric(k[2:86,2])))
-x <- as.numeric(k[2:86,1])
 
 #weights nx
-g <- lm(y~x, weights = as.numeric(k[2:86, 3]))
+g <- lm(y ~ x, weights = k[-86, 3])
 summary(g)
 beta <- g$coefficients[2]
 alpha <- g$coefficients[1]
@@ -243,3 +244,24 @@ alpha_1 <- g1$coefficients[1]
 c_1 <- exp(beta_1)
 b_1 <- exp(alpha_1 + log(log(c_1)) - log(c_1 - 1))
 b_1*c_1
+
+
+wls <- function(par) { 
+  x1 <- par[1]
+  x2 <- par[2] 
+  sum(w*(y-x1-x2*x)^2) }
+nlminb(start=c(-10, 1), obj=f)
+
+nlm <- function(par) { 
+  x1 <- par[1]
+  x2 <- par[2] 
+  sum(w*(y2-exp(-x1*(x2^x)*(x2-1)/log(x2)))^2) }
+nlminb(start=c(0.5, 2), obj=f)
+
+mle <- function(par) { 
+  x1 <- par[1]
+  x2 <- par[2] 
+  sum((w-d)*x1*x2^x*(x2-1)/log(x2)-d*log(1-exp(-x1*(x2^x)*(x2-1)/log(x2)))) }
+nlminb(start=c(0.5, 2), obj=f)
+
+
