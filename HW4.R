@@ -219,7 +219,8 @@ newton.raphson(mitinom.loglike, .01)
 
 #5################################
 
-k <- read.csv("StatisticalSimulation/Life table 108male.CSV", header = T, skip = 1)
+deathrates <- read.csv("StatisticalSimulation/maledeathrates.CSV", header = T)
+population <- 
 y <- log(-log(1-k[-86, 2]))
 y2 <- 1-k[-86, 2]
 d <- k[-86, 4]
