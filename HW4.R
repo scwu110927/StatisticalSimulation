@@ -238,15 +238,15 @@ write.table(long, file = "StatisticalSimulation/maledeathrates2.CSV",
             sep=",", row.names = F, na = "NA")
 
 long <- read.csv("StatisticalSimulation/maledeathrates2.csv", header = T)
-y <- log(-log(1-k[-86, 2]))
-y2 <- 1-k[-86, 2]
-d <- k[-86, 4]
-x <- k[-86, 1]
-w <- k[-86, 3]
+p <- long$p/1000
+llp <- log(-log(1-p))
+d <- long$d
+x <- long$year
+n <- as.numeric(long$n)
 
 
 #weights nx
-g <- lm(y ~ x, weights = k[-86, 3])
+g <- lm(llp ~ x, weights = n)
 summary(g)
 beta <- g$coefficients[2]
 alpha <- g$coefficients[1]
