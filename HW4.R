@@ -219,8 +219,25 @@ newton.raphson(mitinom.loglike, .01)
 
 #5################################
 
-deathrates <- read.csv("StatisticalSimulation/maledeathrates.CSV", header = T)
-population <- 
+wide <- read.csv("StatisticalSimulation/maledeathrates.csv", header = T)
+long_p <- reshape(wide, direction = "long", 
+                       varying = list(names(wide)[2:4]),
+                       v.names = "p", idvar = "year",
+                       timevar = "t", times = 1:3)
+long_n <- reshape(wide, direction = "long", 
+                  varying = list(names(wide)[5:7]),
+                  v.names = "n", idvar = "year",
+                  timevar = "t", times = 1:3)
+long_d <- reshape(wide, direction = "long", 
+                  varying = list(names(wide)[8:10]),
+                  v.names = "d", idvar = "year",
+                  timevar = "t", times = 1:3)
+long <- cbind(long_p, long_n, long_d)[, c(1, 8, 9, 18, 27)]
+long <- long[order(long$year),]
+write.table(long, file = "StatisticalSimulation/maledeathrates2.CSV", 
+            sep=",", row.names = F, na = "NA")
+
+long <- read.csv("StatisticalSimulation/maledeathrates2.csv", header = T)
 y <- log(-log(1-k[-86, 2]))
 y2 <- 1-k[-86, 2]
 d <- k[-86, 4]
