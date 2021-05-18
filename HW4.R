@@ -76,7 +76,7 @@ func.b <- function(x){
   exp(1) - 1/(3.5 + x)
 }
 func.c <- function(x){
-  exp(-x)/((1 + x^2)^(2) - 0.5
+  exp(-x)/((1 + x^2)^(1/2)) - 0.5
 }
 
 bisection <- function(f, a, b){
