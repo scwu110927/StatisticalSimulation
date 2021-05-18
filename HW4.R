@@ -76,7 +76,7 @@ func.b <- function(x){
   exp(1) - 1/(3.5 + x)
 }
 func.c <- function(x){
-  exp(-x)/((1 + x^2)^2) - 0.5
+  exp(-x)/sqrt(1 + x^2) - 0.5
 }
 
 bisection <- function(f, a, b){
@@ -143,14 +143,10 @@ uniroot(func.b, c(-3.4, -2))
 
 curve(func.c, xlim = c(-2,2), lwd = 2)
 abline(h=0, lty = 2)
-points(-1.315, 0, cex = 2, pch = 21, bg = 1)
-points(0.398, 0, cex = 2, pch = 21, bg = 1)
-bisection(func.c, -2, 1) 
-false.posi(func.c, -2, -1)
-false.posi(func.c, 0, 1)
-uniroot(func.c, c(-2, -1)) 
-uniroot(func.c, c(0, 1)) 
-
+points(0.558, 0, cex = 2, pch = 21, bg = 1)
+bisection(func.c, -1, 2) 
+false.posi(func.c, -1, 2)
+uniroot(func.c, c(-1, 2)) 
 
 
 #4################################
