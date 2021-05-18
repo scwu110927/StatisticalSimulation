@@ -149,8 +149,6 @@ false.posi(func.c, -2, 1)
 uniroot(func.c, c(-2, 1)) 
 
 
-
-
 #4################################
 mitinom.loglike <- function(theta){
   1997/(2+theta) - 906/(1-theta) - 904/(1-theta) + 32/(theta)
