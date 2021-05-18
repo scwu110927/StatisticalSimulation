@@ -146,10 +146,9 @@ abline(h=0, lty = 2)
 points(-1.315, 0, cex = 2, pch = 21, bg = 1)
 points(0.398, 0, cex = 2, pch = 21, bg = 1)
 bisection(func.c, -2, 1) 
-false.posi(func.c, -2, -1)
-false.posi(func.c, 0, 1)
-uniroot(func.c, c(-2, -1)) 
-uniroot(func.c, c(0, 1)) 
+false.posi(func.c, -2, 1)
+uniroot(func.c, c(-2, 1)) 
+
 
 
 
