@@ -63,7 +63,44 @@ t3 #control result
 t4 #antithetic result
 
 #2################################
+x <- matrix(rexp(10000), byrow = T, ncol = 5)
+y <- x[,1]+2*x[,2]+3*x[,3]+4*x[,4]+5*x[,5]
+sum(y >= 21.6)/2000
+a <- y >= 21.6
+var(a)
+#第一個方式
+#直接生成2000組5筆服從指數分配(1)的亂數
+#看>=21.6 的機率
 
+#antithetic#############
+antithetic <- function(k){
+  t1 <- NULL
+  for (i in 1:k) {
+    a <- runif(1000*5)
+    b <- 1-a
+    x <- qexp(a)
+    x2 <- qexp(b)
+    y1 <- matrix(x, byrow = T, ncol = 5)
+    y2 <- matrix(x2, byrow = T, ncol = 5)
+    z1 <- sum(y1[,1]+2*y1[,2]+3*y1[,3]+4*y1[,4]+5*y1[,5]>=21.6)/1000
+    z2 <- sum(y2[,1]+2*y2[,2]+3*y2[,3]+4*y2[,4]+5*y2[,5]>=21.6)/1000
+    t1 <- c(t1,(z1+z2)/2)
+  }
+  return(cbind(mean(t1),var(t1)))
+}
+
+antithetic(1000)
+
+#a#########
+x1 <- matrix(runif(10000), byrow = T, ncol = 5)
+y1 <- -log(x1)/1
+z1 <- y1[,1]+2*y1[,2]+3*y1[,3]+4*y1[,4]+5*y1[,5]
+sum(z1 >= 21.6)/2000
+a1 <- z1 >= 21.6
+var(a1)
+#先生成10000筆隨機均勻亂數
+#透過-log轉換使之變指數分配
+#然後看>=21.6的機率為何
 
 #3################################
 library('truncnorm')
