@@ -101,50 +101,35 @@ var.reduct <- function(k = 0, rho = 0, n1 = 1000, n2 = 100){
 }
 
 var.reduct(k = 0, rho = -0.9)
-var.reduct(k = 0, rho = -0.5)
-var.reduct(k = 0, rho = 0)
-var.reduct(k = 0, rho = 0.3)
-var.reduct(k = 0, rho = 0.7)
-var.reduct(k = 1, rho = -0.9)
 var.reduct(k = 1, rho = -0.5)
-var.reduct(k = 1, rho = 0)
-var.reduct(k = 1, rho = 0.3)
-var.reduct(k = 1, rho = 0.7)
-var.reduct(k = 2, rho = -0.9)
-var.reduct(k = 2, rho = -0.5)
 var.reduct(k = 2, rho = 0)
-var.reduct(k = 2, rho = 0.3)
-var.reduct(k = 2, rho = 0.7)
-var.reduct(k = 3, rho = -0.9)
-var.reduct(k = 3, rho = -0.5)
-var.reduct(k = 3, rho = 0)
 var.reduct(k = 3, rho = 0.3)
-var.reduct(k = 3, rho = 0.7)
-var.reduct(k = 4, rho = -0.9)
-var.reduct(k = 4, rho = -0.5)
-var.reduct(k = 4, rho = 0)
-var.reduct(k = 4, rho = 0.3)
 var.reduct(k = 4, rho = 0.7)
 
 
 #4################################
 library(LaplacesDemon)
 rn <- rnormm(100, p = c(0.5, 0.5), mu = c(-2, 2), sigma = c(1, 1))
-hist(rn, freq = FALSE)
+hist(rn, freq = FALSE, main = "Hist of Mixture Normal")
 x <- seq(-5, 5, 0.01)
 lines(x, dnormm(x, p = c(0.5, 0.5), mu = c(-2, 2), sigma = c(1, 1)))
-lines(density(rn2, kernel = "gaussian", bw = 1), col = 2)
-lines(density(rn2, kernel = "rectangular", bw = 1), col = 3)
-lines(density(rn2, kernel = "triangular", bw = 1), col = 4)
-
+lines(density(rn2, kernel = "gaussian", bw = 1), lty = 2)
+lines(density(rn2, kernel = "rectangular", bw = 1), lty = 3)
+lines(density(rn2, kernel = "triangular", bw = 1), lty = 4)
+legend('topright', legend = c("Theoretical", "gaussian", "rectangular", 
+                             "triangular"), lty = 1:4)
 
 #5################################
 library(zoo)
 wide <- read.csv("StatisticalSimulation/maledeathrates.csv", header = T)
-plot(wide$year, wide$p_2019, type = 'l', xlim = c(80, 100))
-lines(wide$year[2:100], rollmean(wide$p_2019, k=3), col = 2)
-lines(ksmooth(wide$year, wide$p_2019, "normal", bandwidth = 2), col = 3)
-lines(smooth.spline(wide$year, wide$p_2019, df = 10), col = 4)
+plot(wide$year, wide$p_2019, type = 'l', xlim = c(90, 100), 
+     main = "Age-specific Mortality Rates")
+lines(wide$year[2:100], rollmean(wide$p_2019, k=3), lty = 2)
+lines(ksmooth(wide$year, wide$p_2019, "normal", bandwidth = 2), lty = 3)
+lines(smooth.spline(wide$year, wide$p_2019, df = 10), lty = 4)
+legend('bottomright', legend = c("Data Density", "Rollmean(k=3)", "Kernel(bw=2)", 
+                              "Spline(df=10)"), lty = 1:4)
+
 
 #6################################
 library(MCMCpack)
@@ -152,6 +137,7 @@ bikes <- read.csv("StatisticalSimulation/bikes.csv", h = T)
 summary(lm(riders_registered~temp_feel, data = bikes))
 posterior <- MCMCregress(riders_registered~temp_feel, data = bikes)
 summary(posterior)
+windows()
 plot(posterior)
 
 
