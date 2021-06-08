@@ -128,8 +128,14 @@ var.reduct(k = 4, rho = 0.7)
 
 
 #4################################
-
-
+library(LaplacesDemon)
+rn <- rnormm(100, p = c(0.5, 0.5), mu = c(-2, 2), sigma = c(1, 1))
+hist(rn, freq = FALSE)
+x <- seq(-5, 5, 0.01)
+lines(x, dnormm(x, p = c(0.5, 0.5), mu = c(-2, 2), sigma = c(1, 1)))
+lines(density(rn2, kernel = "gaussian", bw = 1), col = 2)
+lines(density(rn2, kernel = "rectangular", bw = 1), col = 3)
+lines(density(rn2, kernel = "triangular", bw = 1), col = 4)
 
 
 #5################################
