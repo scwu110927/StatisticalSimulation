@@ -1,6 +1,66 @@
 #HW5
 #1################################
+#Impartance_sampling##########
+importance_sampling <- function(k){
+  t1 <- NULL
+  for (i in 1:1000) {
+    x <- runif(1000,0,k)
+    y <- k/(pi*(1+x^2))
+    z <- 0.5-y
+    a <- mean(z)
+    t1 <- c(t1,a)
+  }
+  return(cbind(mean(t1),var(t1)))
+}
 
+#conrtol variate###########
+control <- function(k){
+  t1 <- NULL
+  for(i in 1:1000){
+    x <- runif(1000,0,k)
+    y <- x^2
+    z <- x^4
+    fx <- k/(pi*(1+x^2))
+    g <- lm(fx~y+z)
+    a1 <- g$coefficients[2]*(y-mean(y))
+    a2 <- g$coefficients[3]*(z-mean(z))
+    a <- 0.5 - fx + a1 + a2
+    t1 <- c(t1, a)
+  }
+  return(cbind(mean(t1), var(t1)))
+}
+
+#antithetic#############
+antithetic <- function(k){
+  t1 <- NULL
+  for (i in 1:1000) {
+    a <- runif(1000)
+    b <- 1-a
+    x <- qcauchy(a)
+    x2 <- qcauchy(b)
+    y <- sum(x>k)/1000
+    y2 <- sum(x2>k)/1000
+    t1 <- c(t1,(y+y2)/2)
+  }
+  return(cbind(mean(t1),var(t1)))
+}
+
+#result#####
+t2 <- NULL
+t3 <- NULL
+t4 <- NULL
+for(i in 1:7){
+  b <- c(6, 5, 4, 3.5, 3, 2.5, 2)
+  k2 <- importance_sampling(b[i])
+  k3 <- control(b[i])
+  k4 <- antithetic(b[i])
+  t2 <- rbind(t2,k2)
+  t3 <- rbind(t3,k3)
+  t4 <- rbind(t4,k4)
+}
+t2 #importance_sampling result
+t3 #control result
+t4 #antithetic result
 
 #2################################
 
